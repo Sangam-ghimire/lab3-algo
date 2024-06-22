@@ -1,0 +1,41 @@
+function knapsack_brute_force(weights, values, capacity):
+  1. n = length(weights)
+  2. max_value = 0
+  3. best_combination = []
+
+  4. # Function to calculate total value and weight for a combination
+  5. function calculate_value_and_weight(combination):
+    a. total_weight = 0
+    b. total_value = 0
+    c. for index in combination:
+      i. total_weight += weights[index]
+      ii. total_value += values[index]
+    d. return total_value, total_weight
+
+  6. # Loop through all possible subset sizes from 1 to n
+  7. for subset_size from 1 to n:
+    a. # Generate all combinations of items of size subset_size
+    b. for combo in combinations(range(n), subset_size):
+      i. total_value, total_weight = calculate_value_and_weight(combo)
+      
+      ii. # Check if this combination is feasible and gives a higher value
+      iii. if total_weight <= capacity and total_value > max_value then
+        1. max_value = total_value
+        2. best_combination = list(combo)  # Convert tuple to list
+
+  8. binary_sequence = [0] * n
+  9. for idx in best_combination:
+    a. binary_sequence[idx] = 1
+
+  10. weight_sequence = []
+  11. for idx in best_combination:
+    a. weight_sequence.append(weights[idx])
+
+  12. # Print results
+  13. print("Maximum value that can be achieved:", max_value)
+  14. print("Items to include in the knapsack:")
+  15. for idx in best_combination:
+    a. print("Item", idx + 1, ": (Weight =", weights[idx], ", Value =", values[idx], ")")
+  
+  16. return max_value, weight_sequence, binary_sequence (including fraction)
+end function

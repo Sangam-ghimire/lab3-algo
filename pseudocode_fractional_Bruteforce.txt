@@ -1,0 +1,52 @@
+function fractional_knapsack_bruteforce(weights, values, capacity):
+  1. num_items = length(weights)
+  2. max_value = 0.0
+  3. best_items = []
+
+  4. for subset_size from 1 to num_items:
+    a. for each subset of size subset_size in all_subsets(range(num_items)):
+      i. total_weight = sum(weights[idx] for idx in subset)
+      ii. total_value = sum(values[idx] for idx in subset)
+
+      iii. if total_weight <= capacity then
+        1. if total_value > max_value then
+          a. max_value = total_value
+          b. best_items = [(idx, 1.0) for idx in subset]
+      b. else
+        1. remaining_capacity = capacity
+        2. current_value = 0.0
+        3. included_items = []
+
+        4. for idx in subset:
+          a. if weights[idx] <= remaining_capacity then
+            i. included_items.append((idx, 1.0))
+            ii. remaining_capacity -= weights[idx]
+            iii. current_value += values[idx]
+          b. else
+            i. fraction = remaining_capacity / weights[idx]
+            ii. included_items.append((idx, fraction))
+            iii. current_value += values[idx] * fraction
+            iv. remaining_capacity = 0
+            v. break
+
+        5. if current_value > max_value then
+          a. max_value = current_value
+          b. best_items = included_items
+
+  5. binary_sequence = [0] * num_items
+  6. weight_sequence = []
+
+  7. for idx from 0 to num_items - 1:
+    a. if idx in [item_idx for item_idx, _ in best_items] then
+      i. item_idx = index_of(idx in [item_idx for item_idx, _ in best_items])
+      ii. fraction = best_items[item_idx][1]
+
+      iii. binary_sequence[idx] = fraction
+      iv. weight_sequence.append(weights[idx] * fraction)
+    b. else
+      i. binary_sequence[idx] = 0
+
+  8. print_results(max_value, weight_sequence, binary_sequence, weights, values)
+
+  9. return max_value, weight_sequence and binary_sequence
+end function

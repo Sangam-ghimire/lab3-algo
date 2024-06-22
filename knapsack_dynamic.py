@@ -1,44 +1,43 @@
 def knapsack_01(num_items, weights, values, capacity):
 
-    dp = [[0 for i in range(capacity + 1)] for j in range(num_items + 1)]
+    # Initialize a DP table to store maximum values for each capacity and item count
+    dp_table = [[0 for current_capacity in range(capacity + 1)] for item_index in range(num_items + 1)]
 
+    # Fill the DP table
     for i in range(1, num_items + 1):
-        for w in range(1, capacity + 1):
-
-            if weights[i - 1] > w:
-                dp[i][w] = dp[i - 1][w]
+        for current_capacity in range(1, capacity + 1):
+            if weights[i - 1] > current_capacity:
+                dp_table[i][current_capacity] = dp_table[i - 1][current_capacity]
             else:
+                dp_table[i][current_capacity] = max(dp_table[i - 1][current_capacity], 
+                                                    values[i - 1] + dp_table[i - 1][current_capacity - weights[i - 1]])
 
-                dp[i][w] = max(dp[i - 1][w], values[i - 1] + dp[i - 1][w - weights[i - 1]])
+    # Maximum value that can be achieved
+    max_value = dp_table[num_items][capacity]
 
-
-    max_value = dp[num_items][capacity]
-
-
+    # Determine which items are included in the knapsack
     included_items = []
-    w = capacity
+    remaining_capacity = capacity
     for i in range(num_items, 0, -1):
-        if dp[i][w] != dp[i - 1][w]:
+        if dp_table[i][remaining_capacity] != dp_table[i - 1][remaining_capacity]:
             included_items.append(i)
-            w -= weights[i - 1]
-
+            remaining_capacity -= weights[i - 1]
 
     included_items.reverse()
 
-
+    # Create binary sequence indicating which items are included
     binary_sequence = [0] * num_items
-    for item in included_items:
-        binary_sequence[item - 1] = 1
+    for item_index in included_items:
+        binary_sequence[item_index - 1] = 1
 
+    # Collect weights of included items
+    weight_sequence = [weights[item_index - 1] for item_index in included_items]
 
-    weight_sequence = [weights[item - 1] for item in included_items]
-
-
+    # Print results
     print(f"Maximum value that can be achieved: {max_value}")
     print("Items to include in the knapsack:")
-    for item in included_items:
-        print(f"Item {item}: (Weight = {weights[item - 1]}, Value = {values[item - 1]})")
-
+    for item_index in included_items:
+        print(f"Item {item_index}: (Weight = {weights[item_index - 1]}, Value = {values[item_index - 1]})")
 
     return {
         "max_value": max_value,
